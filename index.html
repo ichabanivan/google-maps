@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Пользовательские стили для Google Maps | Юрий Немец</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="map">
+  <input id="pac-input" class="controls" type="text" placeholder="Street, City, State, Zip">
+  <div id="map-canvas"></div>
+</div>
+
+<div id="pac-container">
+  <!--<input id="pac-input" class="controls" type="text" placeholder="Street, City, State, Zip">-->
+</div>
+<section id="google-map">
+  <div id="map"></div>
+  <div id="zoom-in"></div>
+  <div id="zoom-out"></div>
+  <address id="address">Харків, Харківська область, Украина</address>
+</section>
+
+<section class="values">
+  <input type="text" id="region" placeholder="region">
+  <input type="text" id="place_id" placeholder="place_id">
+  <input type="text" id="longitude" placeholder="longitude">
+  <input type="text" id="latitude" placeholder="latitude">
+  <input type="text" id="city" placeholder="city">
+  <input type="text" id="street" placeholder="street">
+  <input type="text" id="house" placeholder="house">
+</section>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="map.js"></script>
+
+<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBk0TJN24WH7J7xRwq3fSFKprM8H68LyYU&libraries=places&callback=initMap"></script>
+
+
+</body>
+</html>

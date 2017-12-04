@@ -187,12 +187,12 @@ function initMap() {
   var mapOptions = {
     // Координаты
     center: new google.maps.LatLng(latitude, longitude),
-    panControl: true,
-    zoomControl: true,
+    // panControl: true,
+    // zoomControl: true,
     // mapTypeControl: false,
     // streetViewControl: false,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    scrollwheel: true,
+    // mapTypeId: google.maps.MapTypeId.ROADMAP,
+    // scrollwheel: true,
     styles: style,
     zoom: mapZoom
   };
@@ -233,15 +233,10 @@ function initMap() {
     alert("Browser doesn't support Geolocation")
   }
 
-  google.maps.event.addListener(map, 'click', function (e) {
-    var lat = e.latLng.lat(),
-    lng = e.latLng.lng();
-    GetLocationLn(lat, lng)
-  })
+  function GetLocationLn(lang, lat, lng) {
 
-  function GetLocationLn(lat, lng) {
-    // console.log(lat, lng)
-    var url = '//maps.googleapis.com/maps/api/geocode/json?&latlng=' + lat + ',' + lng + '&sensor=false&language=ru&language=en&components=country&language=ua';
+    console.log(lat, lng)
+    var url = '//maps.googleapis.com/maps/api/geocode/json?&latlng=' + lat + ',' + lng + '&sensor=false&components=country&language=' + lang;
 
     var xhr = new XMLHttpRequest();
 
@@ -251,13 +246,16 @@ function initMap() {
 
       if (res.status == "OK") {
         a = res;
+        console.log(fullAddress)
         fullAddress = a.results[0].formatted_address;
 
         address = a.results[0].address_components;
 
         place_id = a.results[0].place_id;
-        longitude = a.results[0].geometry.location.lng;
-        latitude = a.results[0].geometry.location.lat;
+        longitude = lng;
+        // longitude = a.results[0].geometry.location.lng;
+        // latitude = a.results[0].geometry.location.lat;
+        latitude = lat;
 
         for (i in address) {
           if (!address[i].types.indexOf('administrative_area_level_1', 0)) {
@@ -316,66 +314,109 @@ function initMap() {
     xhr.send();
   }
 
-  var input = /** @type {HTMLInputElement} */(document.getElementById('pac-input'));
+  google.maps.event.addListener(map, 'click', function (e) {
+    var lat = e.latLng.lat(),
+    lng = e.latLng.lng();
+    console.log(lat, lng)
 
-  var types = document.getElementById('type-selector');
+    // for (lang in ['en', 'uk'])
+
+    // GetLocationLn('en',lat, lng)
+    // console.log('region', region)
+    // console.log('place_id', place_id)
+    // console.log('longitude', longitude)
+    // console.log('latitude', latitude)
+    // console.log('city', city)
+    // console.log('street', street)
+    // console.log('house', house)
+    // GetLocationLn('uk',lat, lng)
+    // console.log('region', region)
+    // console.log('place_id', place_id)
+    // console.log('longitude', longitude)
+    // console.log('latitude', latitude)
+    // console.log('city', city)
+    // console.log('street', street)
+    // console.log('house', house)
+    GetLocationLn('ru',lat, lng)
+    console.log('region', region)
+    console.log('place_id', place_id)
+    console.log('longitude', longitude)
+    console.log('latitude', latitude)
+    console.log('city', city)
+    console.log('street', street)
+
+    var service = new google.maps.places.PlacesService(map);
+
+    service.getDetails({
+      placeId: place_id
+    }, function(place, status) {
+      console.dir(place, status)
+    });
+  })
 
 
-  var countryRestrict = {'country': 'ua'};
 
-  var autocomplete = new google.maps.places.Autocomplete(input, {
-    types: ['(cities)'],
-    componentRestrictions: countryRestrict
-  });
-  autocomplete.bindTo('bounds', map);
-
-  var infowindow = new google.maps.InfoWindow();
+  // var input = /** @type {HTMLInputElement} */(document.getElementById('pac-input'));
+  //
+  // var types = document.getElementById('type-selector');
+  //
+  //
+  // var countryRestrict = {'country': 'ua'};
+  //
+  // var autocomplete = new google.maps.places.Autocomplete(input, {
+  //   types: ['(cities)'],
+  //   componentRestrictions: countryRestrict
+  // });
+  // autocomplete.bindTo('bounds', map);
+  //
+  // var infowindow = new google.maps.InfoWindow();
 
   // Маркер на карте
   var marker = new google.maps.Marker({
     position: new google.maps.LatLng(latitude, longitude),
     map: map,
     visible: true,
-    icon: markerUrl
+    // icon: markerUrl
   });
 
-  google.maps.event.addListener(autocomplete, 'place_changed', function() {
-    infowindow.close();
-    marker.setVisible(false);
-    var place = autocomplete.getPlace();
-    if (!place.geometry) {
-      return;
-    }
-
-    // If the place has a geometry, then present it on a map.
-    if (place.geometry.viewport) {
-      map.fitBounds(place.geometry.viewport);
-    } else {
-      map.setCenter(place.geometry.location);
-      map.setZoom(mapZoom);
-    }
-    marker.setIcon(/** @type {google.maps.Icon} */({
-      url: markerUrl,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(35, 35)
-    }));
-    marker.setPosition(place.geometry.location);
-    marker.setVisible(true);
-
-    var address = '';
-    if (place.address_components) {
-      address = [
-        (place.address_components[0] && place.address_components[0].short_name || ''),
-        (place.address_components[1] && place.address_components[1].short_name || ''),
-        (place.address_components[2] && place.address_components[2].short_name || '')
-      ].join(' ');
-    }
-
-    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-    infowindow.open(map, marker);
-  });
+  // google.maps.event.addListener(autocomplete, 'place_changed', function(e) {
+  //   console.log(e)
+  //   infowindow.close();
+  //   marker.setVisible(false);
+  //   var place = autocomplete.getPlace();
+  //   if (!place.geometry) {
+  //     return;
+  //   }
+  //
+  //   // If the place has a geometry, then present it on a map.
+  //   if (place.geometry.viewport) {
+  //     map.fitBounds(place.geometry.viewport);
+  //   } else {
+  //     map.setCenter(place.geometry.location);
+  //     map.setZoom(mapZoom);
+  //   }
+  //   marker.setIcon(/** @type {google.maps.Icon} */({
+  //     // url: markerUrl,
+  //     size: new google.maps.Size(71, 71),
+  //     origin: new google.maps.Point(0, 0),
+  //     anchor: new google.maps.Point(17, 34),
+  //     scaledSize: new google.maps.Size(35, 35)
+  //   }));
+  //   marker.setPosition(place.geometry.location);
+  //   marker.setVisible(true);
+  //
+  //   var address = '';
+  //   if (place.address_components) {
+  //     address = [
+  //       (place.address_components[0] && place.address_components[0].short_name || ''),
+  //       (place.address_components[1] && place.address_components[1].short_name || ''),
+  //       (place.address_components[2] && place.address_components[2].short_name || '')
+  //     ].join(' ');
+  //   }
+  //
+  //   infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+  //   infowindow.open(map, marker);
+  // });
 
 }
 

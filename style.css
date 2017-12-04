@@ -51,7 +51,6 @@ html, body {
   border-radius: 2px 0 0 2px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  height: 32px;
   outline: none;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
@@ -64,12 +63,20 @@ html, body {
   font-size: 15px;
   font-weight: 300;
   text-overflow: ellipsis;
+  height: 50px;
+  line-height: 50px;
+}
+
+input {
+  height: 50px;
+  line-height: 50px;
+  padding: 10px;
 }
 
 #pac-input:focus {
   border-color: #4d90fe;
   margin-left: -1px;
-  padding-left: 14px;  /* Regular padding-left + 1. */
+  padding-left: 14px;
   width: 401px;
 }
 
@@ -87,4 +94,12 @@ html, body {
   font-family: Roboto;
   font-size: 13px;
   font-weight: 300;
+}
+
+.map {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }

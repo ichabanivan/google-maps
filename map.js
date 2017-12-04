@@ -187,25 +187,18 @@ function initMap() {
   var mapOptions = {
     // Координаты
     center: new google.maps.LatLng(latitude, longitude),
-    // panControl: true,
-    // zoomControl: true,
-    // mapTypeControl: false,
-    // streetViewControl: false,
-    // mapTypeId: google.maps.MapTypeId.ROADMAP,
-    // scrollwheel: true,
+    panControl: true,
+    zoomControl: true,
+    mapTypeControl: false,
+    streetViewControl: false,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    scrollwheel: true,
     styles: style,
     zoom: mapZoom
   };
 
   //Инициализация карты
   map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-
-
-  // Окно на карте используется при определении локации
-  // var infoWindow = new google.maps.InfoWindow({
-  //   map: map
-  // });
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -235,7 +228,7 @@ function initMap() {
 
   function GetLocationLn(lang, lat, lng) {
 
-    console.log(lat, lng)
+    console.log(lang, lat, lng)
     var url = '//maps.googleapis.com/maps/api/geocode/json?&latlng=' + lat + ',' + lng + '&sensor=false&components=country&language=' + lang;
 
     var xhr = new XMLHttpRequest();
@@ -249,12 +242,13 @@ function initMap() {
         console.log(fullAddress)
         fullAddress = a.results[0].formatted_address;
 
+        $('#pac-input').val(fullAddress)
+
         address = a.results[0].address_components;
 
         place_id = a.results[0].place_id;
+
         longitude = lng;
-        // longitude = a.results[0].geometry.location.lng;
-        // latitude = a.results[0].geometry.location.lat;
         latitude = lat;
 
         for (i in address) {
@@ -271,14 +265,6 @@ function initMap() {
           }
         }
 
-        // console.log('region', region)
-        // console.log('place_id', place_id)
-        // console.log('longitude', longitude)
-        // console.log('latitude', latitude)
-        // console.log('city', city)
-        // console.log('street', street)
-        // console.log('house', house)
-
         $('#region').val(region)
         $('#place_id').val(place_id)
         $('#longitude').val(longitude)
@@ -289,22 +275,13 @@ function initMap() {
 
         $('#address').html(fullAddress)
 
-
+        infowindow.close();
         position = new google.maps.LatLng(latitude, longitude);
 
         marker.setPosition(position);
 
-
       } else {
-        alert('Error')
-
-        // console.log('region', region)
-        // console.log('place_id', place_id)
-        // console.log('longitude', longitude)
-        // console.log('latitude', latitude)
-        // console.log('city', city)
-        // console.log('street', street)
-        // console.log('house', house)
+        console.error("The place was not changed try again several times")
 
       }
     }
@@ -318,107 +295,75 @@ function initMap() {
     var lat = e.latLng.lat(),
     lng = e.latLng.lng();
     console.log(lat, lng)
-
-    // for (lang in ['en', 'uk'])
-
-    // GetLocationLn('en',lat, lng)
-    // console.log('region', region)
-    // console.log('place_id', place_id)
-    // console.log('longitude', longitude)
-    // console.log('latitude', latitude)
-    // console.log('city', city)
-    // console.log('street', street)
-    // console.log('house', house)
-    // GetLocationLn('uk',lat, lng)
-    // console.log('region', region)
-    // console.log('place_id', place_id)
-    // console.log('longitude', longitude)
-    // console.log('latitude', latitude)
-    // console.log('city', city)
-    // console.log('street', street)
-    // console.log('house', house)
-    GetLocationLn('ru',lat, lng)
-    console.log('region', region)
-    console.log('place_id', place_id)
-    console.log('longitude', longitude)
-    console.log('latitude', latitude)
-    console.log('city', city)
-    console.log('street', street)
-
-    var service = new google.maps.places.PlacesService(map);
-
-    service.getDetails({
-      placeId: place_id
-    }, function(place, status) {
-      console.dir(place, status)
-    });
+    
+    // GetLocationLn('en', lat, lng)
+    GetLocationLn('uk', lat, lng)
   })
 
 
 
-  // var input = /** @type {HTMLInputElement} */(document.getElementById('pac-input'));
-  //
-  // var types = document.getElementById('type-selector');
-  //
-  //
-  // var countryRestrict = {'country': 'ua'};
-  //
-  // var autocomplete = new google.maps.places.Autocomplete(input, {
-  //   types: ['(cities)'],
-  //   componentRestrictions: countryRestrict
-  // });
-  // autocomplete.bindTo('bounds', map);
-  //
-  // var infowindow = new google.maps.InfoWindow();
+  var input = /** @type {HTMLInputElement} */(document.getElementById('pac-input'));
+
+  var types = document.getElementById('type-selector');
+  
+  var countryRestrict = {'country': 'ua'};
+
+  var autocomplete = new google.maps.places.Autocomplete(input, {
+    types: ['geocode'],
+    componentRestrictions: countryRestrict
+  });
+
+  autocomplete.bindTo('bounds', map);
+
+  var infowindow = new google.maps.InfoWindow();
 
   // Маркер на карте
   var marker = new google.maps.Marker({
     position: new google.maps.LatLng(latitude, longitude),
     map: map,
     visible: true,
-    // icon: markerUrl
+    icon: markerUrl
   });
 
-  // google.maps.event.addListener(autocomplete, 'place_changed', function(e) {
-  //   console.log(e)
-  //   infowindow.close();
-  //   marker.setVisible(false);
-  //   var place = autocomplete.getPlace();
-  //   if (!place.geometry) {
-  //     return;
-  //   }
-  //
-  //   // If the place has a geometry, then present it on a map.
-  //   if (place.geometry.viewport) {
-  //     map.fitBounds(place.geometry.viewport);
-  //   } else {
-  //     map.setCenter(place.geometry.location);
-  //     map.setZoom(mapZoom);
-  //   }
-  //   marker.setIcon(/** @type {google.maps.Icon} */({
-  //     // url: markerUrl,
-  //     size: new google.maps.Size(71, 71),
-  //     origin: new google.maps.Point(0, 0),
-  //     anchor: new google.maps.Point(17, 34),
-  //     scaledSize: new google.maps.Size(35, 35)
-  //   }));
-  //   marker.setPosition(place.geometry.location);
-  //   marker.setVisible(true);
-  //
-  //   var address = '';
-  //   if (place.address_components) {
-  //     address = [
-  //       (place.address_components[0] && place.address_components[0].short_name || ''),
-  //       (place.address_components[1] && place.address_components[1].short_name || ''),
-  //       (place.address_components[2] && place.address_components[2].short_name || '')
-  //     ].join(' ');
-  //   }
-  //
-  //   infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-  //   infowindow.open(map, marker);
-  // });
+  google.maps.event.addListener(autocomplete, 'place_changed', function(e) {
+    infowindow.close();
+    marker.setVisible(false);
+    var place = autocomplete.getPlace();
+    if (!place.geometry) {
+      return;
+    }
 
+    // If the place has a geometry, then present it on a map.
+    if (place.geometry.viewport) {
+      map.fitBounds(place.geometry.viewport);
+    } else {
+      map.setCenter(place.geometry.location);
+      map.setZoom(mapZoom);
+    }
+    marker.setIcon(/** @type {google.maps.Icon} */({
+      url: markerUrl,
+      size: new google.maps.Size(71, 71),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(17, 34),
+      scaledSize: new google.maps.Size(35, 35)
+    }));
+    marker.setPosition(place.geometry.location);
+    var lat = place.geometry.location.lat(), lng = place.geometry.location.lng();
+
+    GetLocationLn('uk', lat, lng)
+
+    marker.setVisible(true);
+
+    var address = '';
+    if (place.address_components) {
+      address = [
+        (place.address_components[0] && place.address_components[0].short_name || ''),
+        (place.address_components[1] && place.address_components[1].short_name || ''),
+        (place.address_components[2] && place.address_components[2].short_name || '')
+      ].join(' ');
+    }
+
+    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+    infowindow.open(map, marker);
+  });
 }
-
-
-
